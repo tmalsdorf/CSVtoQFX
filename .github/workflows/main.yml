@@ -28,4 +28,4 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/csvtoqxf:${{github.ref_name}}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/csvtoqxf:latest
