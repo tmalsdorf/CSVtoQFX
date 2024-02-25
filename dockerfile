@@ -15,7 +15,7 @@ EXPOSE 5000
 
 # Define environment variable
 ENV APP_NAME="csvtopdf"
-ENV FLASK_ENV=development
+ENV FLASK_ENV=production
 
 # Use Gunicorn as the entry point
 CMD ["gunicorn", "-b", "0.0.0.0:5000", "app:app"]
