@@ -18,8 +18,8 @@ Before running the application, ensure you have Python installed on your system.
 1. **Clone the Repository**
 
    ```bash
-   git clone [URL to the repository]
-   cd [repository name]
+   git clone https://github.com/tmalsdorf/CSVtoQFX.git
+   cd CSVtoQFX
    ```
 
 2. **Set Up a Virtual Environment (Optional but Recommended)**
@@ -80,7 +80,7 @@ Contributions to this project are welcome. Please fork the repository and submit
 
 ## License
 
-
+GPL-3.0 license
 
 ---
 
