@@ -32,7 +32,7 @@ Before running the application, ensure you have Python installed on your system.
 3. **Install Dependencies**
 
    ```bash
-   pip install Flask
+   pip install -r app/requirements.txt
    ```
 
 ## Running the Application
