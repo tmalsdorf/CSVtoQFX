@@ -4,6 +4,8 @@
 
 In a world where online converters are as plentiful as stars in the sky, the question isn't just about converting our CSV documents to OFX format; it's about trust. Can we really trust these online tools with our sensitive financial data? Enter our Flask-based CSV to OFX Converter, the in-house solution that promises not just conversion, but also confidentiality and security. This application allows users to upload CSV files containing transaction data and converts them to the OFX (Open Financial Exchange) forma, all while ensuring your financial data never lingers unnecessarily on any server. Ideal for importing transaction data into financial software that supports OFX, it's the trustworthy bridge between your CSV data and OFX-ready financial tools.
 
+Its not pretty yet but it gets the job done.
+
 ## Features
 
 - Upload a CSV file through a simple web interface.
