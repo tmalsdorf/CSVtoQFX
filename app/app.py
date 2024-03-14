@@ -48,17 +48,27 @@ def convert_csv_to_ofx():
     if file.filename == '':
         return 'No selected file', 400
     if file:
-        filename = secure_filename(file.filename)
         csv_data = file.read().decode('utf-8')
-        ofx_data = csv_to_ofx(csv_data)
-        ofx_filename = os.path.splitext(filename)[0] + '.ofx'
-
-        # Convert OFX data to a BytesIO object and send it
-        return Response(
-            ofx_data,
-            mimetype="application/x-ofx",
-            headers={"Content-disposition": f"attachment; filename={ofx_filename}"}
-        )
+        transactions_raw = list(csv.DictReader(csv_data.splitlines()))
+        
+        transactions = []
+        for t in transactions_raw:
+            # Check if 'Amount' key exists, or use a default value/error handling
+            amount = t.get('Amount')
+            if amount is None:
+                # Handle error, e.g., log it, use a default value, or skip the transaction
+                continue  # For now, let's just skip this transaction
+            
+            transaction_type = 'DEBIT' if float(amount) < 0 else 'CREDIT'
+            transactions.append({
+                'Type': transaction_type,
+                'Trans. Date': t.get('Trans. Date', 'N/A'),  # Provide a default if key doesn't exist
+                'Post Date': t.get('Post Date', 'N/A'),
+                'Amount': amount,
+                'Description': t.get('Description', 'No description')  # Provide a default if key doesn't exist
+            })
+        
+        return render_template('transactions.html', transactions=transactions)
     else:
         return redirect(url_for('index'))
 
