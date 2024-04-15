@@ -67,6 +67,7 @@ Before running the application, ensure you have Python installed on your system.
    - Navigate to `http://localhost:5000/` on your web browser.
    - Click 'Choose File' and select your CSV file.
    - Click 'Upload' to submit the file for conversion.
+   - preview is avaliable 
 
 3. **Downloading the OFX File**
 
