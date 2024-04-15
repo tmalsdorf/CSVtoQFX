@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  web:
+    image: terryalsdorf/csvtoqxf:latest
+    ports:
+      - "5050:5000"
+    environment:
+      APP_NAME: csvtopdf
+      FLASK_ENV: production
+    restart: unless-stopped
