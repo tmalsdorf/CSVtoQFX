@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file, render_template, redirect, url_for, Response
+from flask import Flask, request, send_file, render_template, redirect, url_for, Response, send_from_directory
 import csv
 import xml.etree.ElementTree as ET
 from werkzeug.utils import secure_filename
@@ -35,6 +35,10 @@ def format_date(date_str):
     """
     month, day, year = date_str.split('/')
     return f"{year}{month.zfill(2)}{day.zfill(2)}"
+
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    return send_from_directory('static', filename)
 
 @app.route('/')
 def index():
