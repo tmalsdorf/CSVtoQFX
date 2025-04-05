@@ -36,6 +36,53 @@ def format_date(date_str):
     month, day, year = date_str.split('/')
     return f"{year}{month.zfill(2)}{day.zfill(2)}"
 
+def convert_transaction(transaction):
+    amount = transaction.get('Amount')
+    if amount is None:
+        return None
+
+    transaction_type = 'DEBIT' if float(amount) < 0 else 'CREDIT'
+    return {
+        'Type': transaction_type,
+        'Trans. Date': transaction.get('Trans. Date', 'N/A'),
+        'Post Date': transaction.get('Post Date', 'N/A'),
+        'Amount': amount,
+        'Description': transaction.get('Description', 'No description')
+    }
+
+@app.route('/export-json', methods=['POST'])
+def export_json():
+    transactions_data = request.json
+    return Response(
+        json.dumps(transactions_data, indent=2), 
+        mimetype='application/json',
+        headers={'Content-Disposition': 'attachment;filename=transactions.json'}
+    )
+
+@app.route('/export-xml', methods=['POST'])
+def export_xml():
+    transactions_data = request.json
+    
+    # Create XML root
+    root = ET.Element('transactions')
+    
+    # Add each transaction
+    for transaction in transactions_data:
+        transaction_elem = ET.SubElement(root, 'transaction')
+        for key, value in transaction.items():
+            ET.SubElement(transaction_elem, key.replace(' ', '')).text = str(value)
+    
+    # Convert to pretty-printed XML
+    rough_string = ET.tostring(root, encoding='utf-8')
+    reparsed = minidom.parseString(rough_string)
+    pretty_xml = reparsed.toprettyxml(indent="  ")
+    
+    return Response(
+        pretty_xml, 
+        mimetype='application/xml',
+        headers={'Content-Disposition': 'attachment;filename=transactions.xml'}
+    )
+
 @app.route('/static/<path:filename>')
 def serve_static(filename):
     return send_from_directory('static', filename)
@@ -55,22 +102,7 @@ def convert_csv_to_ofx():
         csv_data = file.read().decode('utf-8')
         transactions_raw = list(csv.DictReader(csv_data.splitlines()))
         
-        transactions = []
-        for t in transactions_raw:
-            # Check if 'Amount' key exists, or use a default value/error handling
-            amount = t.get('Amount')
-            if amount is None:
-                # Handle error, e.g., log it, use a default value, or skip the transaction
-                continue  # For now, let's just skip this transaction
-            
-            transaction_type = 'DEBIT' if float(amount) < 0 else 'CREDIT'
-            transactions.append({
-                'Type': transaction_type,
-                'Trans. Date': t.get('Trans. Date', 'N/A'),  # Provide a default if key doesn't exist
-                'Post Date': t.get('Post Date', 'N/A'),
-                'Amount': amount,
-                'Description': t.get('Description', 'No description')  # Provide a default if key doesn't exist
-            })
+        transactions = [t for t in (convert_transaction(t) for t in transactions_raw) if t is not None]
         
         return render_template('transactions.html', transactions=transactions)
     else:

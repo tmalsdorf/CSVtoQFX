@@ -14,6 +14,8 @@
             <button onclick="invertValues()" class="btn btn-secondary">Invert Values</button>
             <button onclick="downloadCSV()" class="btn btn-success">Download CSV</button>
             <button onclick="downloadOFX()" class="btn btn-info">Download OFX</button>
+            <button onclick="downloadJSON()" class="btn btn-warning">Download JSON</button>
+            <button onclick="downloadXML()" class="btn btn-danger">Download XML</button>
         </div>
         <table class="table table-striped">
             <thead>
@@ -120,6 +122,41 @@
     
             const ofxContent = header + ofxBody + footer;
             downloadToFile(ofxContent, 'transactions.ofx', 'application/ofx');
+        }
+
+        function downloadJSON() {
+            const transactions = [];
+            const rows = document.querySelectorAll("table tr");
+            for (let i = 1; i < rows.length; i++) { // Skip header row
+                const cols = rows[i].querySelectorAll("td");
+                transactions.push({
+                    Type: cols[0].innerText,
+                    'Transaction Date': cols[1].innerText,
+                    'Posting Date': cols[2].innerText,
+                    Amount: cols[3].innerText,
+                    Description: cols[4].innerText
+                });
+            }
+            downloadToFile(JSON.stringify(transactions, null, 2), 'transactions.json', 'application/json');
+        }
+
+        function downloadXML() {
+            const xml = [];
+            xml.push('<?xml version="1.0" encoding="UTF-8"?>');
+            xml.push('<transactions>');
+            const rows = document.querySelectorAll("table tr");
+            for (let i = 1; i < rows.length; i++) { // Skip header row
+                const cols = rows[i].querySelectorAll("td");
+                xml.push('  <transaction>');
+                xml.push(`    <Type>${cols[0].innerText}</Type>`);
+                xml.push(`    <TransactionDate>${cols[1].innerText}</TransactionDate>`);
+                xml.push(`    <PostingDate>${cols[2].innerText}</PostingDate>`);
+                xml.push(`    <Amount>${cols[3].innerText}</Amount>`);
+                xml.push(`    <Description>${cols[4].innerText}</Description>`);
+                xml.push('  </transaction>');
+            }
+            xml.push('</transactions>');
+            downloadToFile(xml.join('\n'), 'transactions.xml', 'application/xml');
         }
     </script>
 </body>
